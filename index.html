@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>妙麗歲數計算機</title>
+  <!-- 載入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* 使用 Inter 字體（可選，Tailwind 預設字體也很好看） */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<!-- 主題色背景 -->
+<body class="bg-[#F4EEFF] min-h-screen flex items-center justify-center p-4">
+
+  <!-- 主卡片容器 -->
+  <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
+
+    <!-- 將 SVG 圖示換成 🐶 -->
+    <div class="w-24 h-24 mx-auto mb-4 flex items-center justify-center text-6xl">
+      🐶
+    </div>
+
+    <!-- 標題 -->
+    <h1 class="text-3xl font-bold text-center text-[#424874] mb-6">
+      妙麗歲數計算機
+    </h1>
+    <!-- <p class="text-center text-sm text-[#A6B1E1] mb-6">（科基專用 🐶）</p> -->
+
+    <!-- 輸入區域 -->
+    <div class="mb-4">
+      <label for="birthday" class="block text-sm font-medium text-[#424874] mb-2">
+        請選擇妙麗的生日：
+      </label>
+      <input
+        type="date"
+        id="birthday"
+        value="2023-02-28"
+        class="w-full p-3 border border-[#A6B1E1] rounded-lg bg-[#F4EEFF] text-[#424874] focus:outline-none focus:ring-2 focus:ring-[#424874] focus:border-transparent transition"
+      />
+    </div>
+
+    <!-- 按鈕 -->
+    <button
+      id="calcBtn"
+      class="w-full p-3 bg-[#A6B1E1] text-white font-bold rounded-lg hover:bg-[#424874] transition-colors duration-300 transform hover:scale-105"
+    >
+      開始計算
+    </button>
+
+    <!-- 結果顯示區域 -->
+    <div
+      id="result"
+      class="mt-6 p-4 bg-[#F4EEFF] rounded-lg text-[#424874] text-center min-h-[90px] flex items-center justify-center"
+      style="font-size: 1.1em; line-height: 1.6;"
+    >
+      請選擇日期並點擊按鈕
+    </div>
+
+  </div>
+
+  <script>
+    // --- JavaScript 邏輯 (與您提供的一致) ---
+
+    function calcDogAgeInYears(birthDate) {
+      const today = new Date();
+      const diffMs = today - birthDate;
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+      // 以 365.25 天估算一年，包含閏年的平均
+      const years = diffDays / 365.25;
+      return years;
+    }
+
+    // 狗齡換算成人齡：
+    // 第 1 年：15 歲
+    // 第 2 年：再加 9 歲（共 24）
+    // 第 3 年之後：每年約 5 歲
+    function dogYearsToHumanYears(dogYears) {
+      if (dogYears <= 0) return 0;
+
+      if (dogYears <= 1) {
+        return dogYears * 15;
+      } else if (dogYears <= 2) {
+        return 15 + (dogYears - 1) * 9;
+      } else {
+        return 24 + (dogYears - 2) * 5;
+      }
+    }
+
+    function formatYearsAndMonths(yearsFloat) {
+      const years = Math.floor(yearsFloat);
+      const months = Math.floor((yearsFloat - years) * 12);
+      return { years, months };
+    }
+
+    document.getElementById('calcBtn').addEventListener('click', function () {
+      const dateStr = document.getElementById('birthday').value;
+
+      if (!dateStr) {
+        document.getElementById('result').innerText = '請先選擇生日日期。';
+        return;
+      }
+
+      // 避免時區問題，手動解析日期字串
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const birthDate = new Date(year, month - 1, day);
+      const today = new Date();
+      
+      // 檢查是否選擇了未來日期
+      if (birthDate > today) {
+        document.getElementById('result').innerText = '生日不能選擇未來的日期喔！';
+        return;
+      }
+
+      const dogAgeYears = calcDogAgeInYears(birthDate);
+      const humanAge = dogYearsToHumanYears(dogAgeYears);
+
+      const resultDiv = document.getElementById('result');
+
+      // 新版：根據使用者 "02.52.24@2x.png" 截圖的格式
+      // 
+      // 修正排版：
+      // 為了避免 flex 容器和 <br> 標籤的排版衝突，
+      // 我們在 innerHTML 內部再包一層 <div>。
+      // 外層的 flex (items-center justify-center) 會將這個內層 div 垂直置中
+      // 內層的 div 則使用 text-center 正常地處理兩行文字。
+      resultDiv.innerHTML = `
+        <div class="text-center">
+          妙麗現在大約 <strong>${dogAgeYears.toFixed(1)}</strong> 歲狗年齡，<br>換算成人類年齡大約是 <strong>${humanAge.toFixed(1)}</strong> 歲。
+        </div>
+      `;
+    });
+  </script>
+</body>
+</html>
